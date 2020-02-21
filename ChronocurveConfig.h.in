@@ -1,0 +1,2 @@
+#define Chronocurve_VERSION_MAJOR @Chronocurve_VERSION_MAJOR@
+#define Chronocurve_VERSION_MINOR @Chronocurve_VERSION_MINOR@
