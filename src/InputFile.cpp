@@ -1,9 +1,11 @@
 #include "InputFile.h"
+#include "Exception.h"
 #include <iostream>
 #include <string>
 #include <vector>
 #include <fstream>
 #include <iterator>
+#include <exception>
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 
@@ -57,6 +59,11 @@ void InputFile::read(const string& filename, const int tmin, const int tmax)
 vector<vector<string>> InputFile::readCsv(const string& filename)
 {
     ifstream file(filename);
+    if(!file.is_open()){
+        throw Exception("Input file cannot be opened");
+    }
+
+
     vector<vector<string>> rows;
     string line;
     string delimiter = ";";

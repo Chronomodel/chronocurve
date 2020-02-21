@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     cout << "---------------------------------------------------------------------" << endl;
     
     InputParams params;
-    params.mFilepath = "input.csv";
+    params.mFilepath = "../tests/input.csv";
 
     params.mTmin = -100000;
     params.mTmax = 10000;
