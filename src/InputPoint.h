@@ -16,6 +16,7 @@ public:
 
 private:
     float parseFloat(const string& str);
+    void adjust(const float lat, const float lng);
 
 public:
     string mIdent;

@@ -3,6 +3,7 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -75,4 +76,47 @@ float InputPoint::parseFloat(const string& str)
         cerr << "INPUT ERROR : Cannot convert " << str << " to float : " << ia.what() << ". Returning 0.0." << endl;
     }
     return value;
+}
+
+void InputPoint::adjust(const float latRed, const float lngRed, const int tmin, const int tmax)
+{
+    // Global
+    Tab_code_select
+    bool_select_Ouv
+
+    bool selectRef = false;
+    float radian = M_PI / 180;
+
+    // ----------------------------------------------------------------------------------------------------------
+    // On ne retient que les points compris (totalement ou partiellement) entre tmin et tmax,
+    // ----------------------------------------------------------------------------------------------------------
+    if((mT1 != "") && (mT1 != "*") && (mT2 != "") && (mT2 != "*") && (mT2 >= tmin) && (mT1 <= tmax))
+    {
+        if(Tab_code_select[11] != ""){
+            for(int i=0; i<10; ++i){
+                selectRef |= (Tab_code_select[i] == mCode);
+            }
+        }
+    }
+
+    // ----------------------------------------------------------------------------------------------------------
+    // Sélection éventuelle par zone géographique
+    // ----------------------------------------------------------------------------------------------------------
+    if(bool_select_Ouv)
+    {
+        float latRedRadian = latRed * radian;
+        float lngRedRadian = lngRed * radian;
+        float latRadian = mLat * radian;
+        float lngRadian = mLng * radian;
+        float ouv = (cosf(latRadian) * cosf(latRedRadian) * cosf(lngRadian - lngRedRadian)) + (sinf(latRadian) * sinf(latRedRadian));
+        float ouv = arccosf(ouv) * 180 / M_PI;
+        if(ouv >= select_ouvmin && ouv < select_ouvmin) // ?????
+        {
+            selectRef = true;
+        }
+    }
+
+    // ----------------------------------------------------------------------------------------------------------
+    // Sélection du point de référence
+    // ----------------------------------------------------------------------------------------------------------
 }
