@@ -49,6 +49,7 @@ void InputFile::read(const string& filename, const int tmin, const int tmax)
     while(ident != "end" && rowIdx < rows.size())
     {
         InputPoint point(rows[rowIdx]);
+        point.adjust(mLat, mLng);
         mPoints.push_back(point);
 
         ++rowIdx;
