@@ -10,40 +10,47 @@ using namespace std;
 class InputPoint
 {
 public:
+    enum Mode 
+    {
+        MODE_INCLINAISON = 'I',
+        MODE_DECLINAISON = 'D',
+        MODE_CHAMP = 'F',
+    };
+
     InputPoint();
-    InputPoint(const vector<string>& values);
+    InputPoint();
     virtual ~InputPoint();
 
 private:
     float parseFloat(const string& str);
-    void adjust(const float lat, const float lng);
+    void setValuesFromStrings(const vector<string>& values, const float lat, const float lng);
 
 public:
     string mIdent;
-    string mCode;
+    string mCode; // ch_code_select
     
-    float mLat;
-    float mLng;
+    float mLat; // ch_lati
+    float mLng; // ch_longi
 
-    float mInc;
-    float mDec;
-    float mK;
-    float mND;
-    float mWID;
-    float mF;
-    float mStdF;
-    float mNF;
-    float mWF;
+    float mInc; // ch_Iij
+    float mDec; // ch_Dij
+    float mK; // ch_Kij
+    float mND; // ch_rij
+    float mWID; // ch_WIDij
+    float mF; // ch_Fij
+    float mStdF; // ch_EctFij
+    float mNF; // ch_rFij
+    float mWF; // ch_WFij
     
-    string mDatingMeth;
-    string mParam1;
-    string mParam2;
-    string mT1;
-    string mT2;
-    string mTm;
+    string mDatingMeth; // ch_methode_datation
+    float mParam1; // ch_param1
+    float mParam2; // ch_param2
+    float mT1; // ch_tdij1
+    float mT2; // ch_tdij2
+    float mTm; // ch_tdijm
 
-    string mStratiForId;
-    string mStratiForF;
+    string mStratiForId; // ch_contrainte_strati_ID
+    string mStratiForF; // ch_contrainte_strati_F
 };
 
 #endif
