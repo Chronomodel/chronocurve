@@ -1,4 +1,4 @@
-#include "InputFile.h"
+    #include "InputFile.h"
 #include "Exception.h"
 #include <iostream>
 #include <string>
@@ -7,7 +7,8 @@
 #include <iterator>
 #include <exception>
 #include <algorithm>
-#include <boost/algorithm/string.hpp>
+#include <regex>
+//#include <boost/algorithm/string.hpp>
 
 using namespace std;
 
@@ -63,15 +64,23 @@ vector<vector<string>> InputFile::readCsv(const string& filename)
         throw Exception("Input file cannot be opened");
     }
 
-
     vector<vector<string>> rows;
     string line;
-    string delimiter = ";";
+    //string delimiter = ";";
+
+    // Explications sur la regex utilisée ici : 
+    // https://stackoverflow.com/questions/11310947/splitting-a-line-of-a-csv-file-into-a-stdvector
+    const regex re{"((?:[^\\\\;]|\\\\.)*?)(?:;|$)"};
 
     while(getline(file, line))
     {
-        vector<string> row;
-        boost::algorithm::split(row, line, boost::is_any_of(delimiter));
+        //vector<string> row;
+        //boost::algorithm::split(row, line, boost::is_any_of(delimiter));
+
+        // Explications sur la regex utilisée ici : 
+        // https://stackoverflow.com/questions/11310947/splitting-a-line-of-a-csv-file-into-a-stdvector
+        vector<string> row{sregex_token_iterator(line.begin(), line.end(), re, 1), sregex_token_iterator()};
+
         rows.push_back(row);
     }
     

@@ -8,13 +8,8 @@
 
 using namespace std;
 
-int main(int argc, char *argv[])
+void setInputDataTest1(InputParams& params)
 {
-    cout << "---------------------------------------------------------------------" << endl;
-    cout << "=> Chronocurve " << Chronocurve_VERSION_MAJOR << "." << Chronocurve_VERSION_MINOR << endl;
-    cout << "---------------------------------------------------------------------" << endl;
-    
-    InputParams params;
     params.mFilepath = "../tests/input.csv";
 
     params.mTmin = -100000;
@@ -38,13 +33,18 @@ int main(int argc, char *argv[])
     params.mAlphaStep = 0.1;
 
     params.mNumIter = 10000;
+}
 
-
-
-
-    InputFile file(params.mFilepath, params.mTmin, params.mTmax);
-    file.display();
-
+int main(int argc, char *argv[])
+{
+    cout << "---------------------------------------------------------------------" << endl;
+    cout << "=> Chronocurve " << Chronocurve_VERSION_MAJOR << "." << Chronocurve_VERSION_MINOR << endl;
+    cout << "---------------------------------------------------------------------" << endl;
+        
+    InputParams params;
+    setInputDataTest1(params);
+    params.init();
+    params.display();
 
     cout << "---------------------------------------------------------------------" << endl;
     return 1;

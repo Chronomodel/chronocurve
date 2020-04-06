@@ -1,6 +1,7 @@
 #ifndef INPUTPARAMS_H
 #define INPUTPARAMS_H
 
+#include "InputFile.h"
 #include <string>
 
 using namespace std;
@@ -32,8 +33,11 @@ public:
 
     InputParams();
     virtual ~InputParams();
+    void init();
+    void display() const;
 
 public:
+    InputFile mFile;
     string mFilepath;
 
     Mode mMode;
