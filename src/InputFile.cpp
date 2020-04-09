@@ -1,4 +1,4 @@
-    #include "InputFile.h"
+#include "InputFile.h"
 #include "Exception.h"
 #include <iostream>
 #include <string>
@@ -14,15 +14,15 @@ using namespace std;
 
 
 InputFile::InputFile():
-mLat(0.f),mLng(0.f)
+mLatReduc(0.f),mLngReduc(0.f)
 {
 
 }
 
-InputFile::InputFile(const string& filename, const int tmin, const int tmax):
-mLat(0.f),mLng(0.f)
+InputFile::InputFile(const string& filename):
+mLatReduc(0.f),mLngReduc(0.f)
 {
-    this->read(filename, tmin, tmax);
+    this->read(filename);
 }
 
 InputFile::~InputFile()
@@ -30,7 +30,7 @@ InputFile::~InputFile()
     
 }
 
-void InputFile::read(const string& filename, const int tmin, const int tmax)
+void InputFile::read(const string& filename)
 {
     vector<vector<string>> rows = this->readCsv(filename);
 
@@ -40,19 +40,17 @@ void InputFile::read(const string& filename, const int tmin, const int tmax)
     mComment2 = rows[2][0];
 
     // Lat Lng
-    mLat = stof(rows[3][1]);
-    mLng = stof(rows[3][3]);
+    mLatReduc = stof(rows[3][1]);
+    mLngReduc = stof(rows[3][3]);
 
     // Table
     int rowIdx = 6;
     string ident = rows[rowIdx][0];
+    mPointsStr.clear();
 
     while(ident != "end" && rowIdx < rows.size())
     {
-        InputPoint point(rows[rowIdx]);
-        point.adjust(mLat, mLng);
-        mPoints.push_back(point);
-
+        mPointsStr.push_back(rows[rowIdx]);
         ++rowIdx;
         ident = rows[rowIdx][0];
     }
@@ -89,33 +87,37 @@ vector<vector<string>> InputFile::readCsv(const string& filename)
     return rows;
 }
 
-void InputFile::display() const
-{
-    for(int i=0; i<mPoints.size(); ++i)
-    {
-        const InputPoint& point = mPoints[i];
 
-        cout << point.mIdent << "\t |"
-            << point.mCode << "\t |"
-            << point.mLat << "\t |"
-            << point.mLng << "\t |"
-            << point.mInc << "\t |"
-            << point.mDec << "\t |"
-            << point.mK << "\t |"
-            << point.mND << "\t |"
-            << point.mWID << "\t |"
-            << point.mF << "\t |"
-            << point.mStdF << "\t |"
-            << point.mNF << "\t |"
-            << point.mWF << "\t |"
-            << point.mDatingMeth << "\t |"
-            << point.mParam1 << "\t |"
-            << point.mParam2 << "\t |"
-            << point.mT1 << "\t |"
-            << point.mT2 << "\t |"
-            << point.mTm << "\t |"
-            << point.mStratiForId << "\t |"
-            << point.mStratiForF << "\t |"
+void InputFile::displayPoints() const
+{
+    for(int i=0; i<mPointsStr.size(); ++i)
+    {
+        const vector<string>& point = mPointsStr[i];
+
+        cout << "Point " << i << ":\t | " 
+            << point[0] << "\t | "
+            << point[1] << "\t | "
+            << point[2] << "\t | "
+            << point[3] << "\t | "
+            << point[4] << "\t | "
+            << point[5] << "\t | "
+            << point[6] << "\t | "
+            << point[7] << "\t | "
+            << point[8] << "\t | "
+            << point[9] << "\t | "
+            << point[10] << "\t | "
+            << point[11] << "\t | "
+            << point[12] << "\t | "
+            << point[13] << "\t | "
+            << point[14] << "\t | "
+            << point[15] << "\t | "
+            << point[16] << "\t | "
+            << point[17] << "\t | "
+            << point[18] << "\t | "
+            << point[19] << "\t | "
+            << point[20] << "\t | "
             << endl;
+
+        cout << "---------------------------------------" << endl;
     }
 }

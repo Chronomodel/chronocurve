@@ -1,7 +1,8 @@
 #ifndef INPUTPARAMS_H
 #define INPUTPARAMS_H
 
-#include "InputFile.h"
+#include "Globals.h"
+#include <vector>
 #include <string>
 
 using namespace std;
@@ -10,58 +11,40 @@ using namespace std;
 class InputParams
 {
 public:
-    enum Mode 
-    {
-        MODE_UNIVARIE = 'U',
-        MODE_SPHERIQUE = 'S',
-        MODE_VECTORIEL = 'V',
-    };
-
-    enum UnivarieMode 
-    {
-        UNIV_MODE_INCLINAISON = 'I',
-        UNIV_MODE_DECLINAISON = 'D',
-        UNIV_MODE_CHAMP = 'F',
-        UNIV_MODE_PROFONDEUR = 'P',
-    };
-
-    enum Type
-    {
-        TYPE_FIXE = 'F',
-        TYPE_BAYESIEN = 'B',
-    };
-
     InputParams();
     virtual ~InputParams();
-    void init();
-    void display() const;
+    void setInputDataTest1();
 
 public:
-    InputFile mFile;
     string mFilepath;
+    vector<string> mCodes;
 
-    Mode mMode;
-    UnivarieMode mUnivMode;
+    ProcessType mProcessType; // Type de traitement
+    VariableType mVariableType; // Type de variable étudiée
 
     int mTmin;
     int mTmax;
 
+    bool mSelectOuv; // bool_select_Ouv
+    double mOuvMax;
+
     bool mUseCorrLat;
     int mResol; // résultats à 1 an , 10ans... prêt
     
-    bool mUseErrMesure;
+    bool mUseErrMesure; // bool_err_mes
+
     Type mTempsType;
     bool mUseTempsBayesienFait;
     bool mUseTempsBayesienConstraint;
 
-    Type mVarianceType;
+    Type mVarianceType; // bool_Var_G_fixe
     bool mUseVarianceIndividelle;
-    float mVarianceFixe;
+    double mVarianceFixe; // Var_G
 
     Type mCoeffLissageType;
-    float mAlphaMin;
-    float mAlphaMax;
-    float mAlphaStep;
+    double mAlphaMin;
+    double mAlphaMax;
+    double mAlphaStep;
 
     int mNumIter;
 };

@@ -1,7 +1,6 @@
 #ifndef INPUTFILE_H
 #define INPUTFILE_H
 
-#include "InputPoint.h"
 #include <string>
 #include <vector>
 
@@ -12,24 +11,22 @@ class InputFile
 {
 public:
     InputFile();
-    InputFile(const string& filename, const int tmin, const int tmax);
+    InputFile(const string& filename);
     virtual ~InputFile();
 
-    void read(const string& filename, const int tmin, const int tmax);
-    void display() const;
-
-protected:
+    void read(const string& filename);
     vector<vector<string>> readCsv(const string& filename);
+    void displayPoints() const;
 
 public:
     string mComment1;
     string mComment2;
     string mComment3;
 
-    float mLat;
-    float mLng;
+    double mLatReduc;
+    double mLngReduc;
 
-    vector<InputPoint> mPoints;
+    vector<vector<string>> mPointsStr;
 };
 
 #endif

@@ -1,6 +1,8 @@
 #ifndef INPUTPOINT_H
 #define INPUTPOINT_H
 
+#include "InputFile.h"
+#include "InputParams.h"
 #include <string>
 #include <vector>
 
@@ -10,47 +12,63 @@ using namespace std;
 class InputPoint
 {
 public:
-    enum Mode 
-    {
-        MODE_INCLINAISON = 'I',
-        MODE_DECLINAISON = 'D',
-        MODE_CHAMP = 'F',
-    };
-
-    InputPoint();
-    InputPoint();
+    InputPoint(int index, const InputFile& file, const InputParams& params, double& tFloor, double& tCeil, double& moy_errij2);
     virtual ~InputPoint();
 
 private:
-    float parseFloat(const string& str);
-    void setValuesFromStrings(const vector<string>& values, const float lat, const float lng);
+    double parseDouble(const string& str);
 
 public:
-    string mIdent;
-    string mCode; // ch_code_select
-    
-    float mLat; // ch_lati
-    float mLng; // ch_longi
 
-    float mInc; // ch_Iij
-    float mDec; // ch_Dij
-    float mK; // ch_Kij
-    float mND; // ch_rij
-    float mWID; // ch_WIDij
-    float mF; // ch_Fij
-    float mStdF; // ch_EctFij
-    float mNF; // ch_rFij
-    float mWF; // ch_WFij
-    
-    string mDatingMeth; // ch_methode_datation
-    float mParam1; // ch_param1
-    float mParam2; // ch_param2
-    float mT1; // ch_tdij1
-    float mT2; // ch_tdij2
-    float mTm; // ch_tdijm
+    string m_ident;
+    int m_index_crav;
 
-    string mStratiForId; // ch_contrainte_strati_ID
-    string mStratiForF; // ch_contrainte_strati_F
+    double m_tdij1;
+    double m_tdij2;
+    double m_tdijm;
+    double m_tdij;
+
+    double m_tij; // temps du "Fait"
+    double m_Ect_tij;
+    double m_Vtij;    // variance bayésienne sur le Fait tij
+
+    double m_nuij; // Pas dans Rec_Pts ?
+
+    vector<int> m_tij_avant;
+    vector<int> m_tij_pendant;
+    vector<int> m_tij_apres;
+
+    bool m_tij_initialise;
+    bool m_tij_maj_bay;
+
+    string m_methode_datation;
+    double m_param1;
+    double m_param2;
+    //densite_priori_tdij:vecteur;
+
+    double m_Pij;
+
+    string m_contrainte_strati;
+
+    double m_Iij;
+    double m_Dij;
+    double m_Kij;
+    double m_rij;
+    double m_Fij;
+    double m_EctFij;
+    double m_rFij;
+
+    // variables pour calcul spline en fonction de type_Var_CMT
+    double m_Yij;
+    double m_EctYij;
+    double m_rYij;
+    double m_Wij;
+    double m_VGij;   // variance locale
+
+    // coordonnées des points ij sur courbe paramétrique
+    double m_XijP;
+    double m_YijP;
+    double m_ZijP;
 };
 
 #endif

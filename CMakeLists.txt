@@ -18,6 +18,8 @@ configure_file(ChronocurveConfig.h.in ChronocurveConfig.h)
 # add the executable
 add_executable(${PROJECT_NAME}
 ${SRC_DIR}/main.cpp
+${SRC_DIR}/Globals.cpp
+${SRC_DIR}/Application.cpp
 ${SRC_DIR}/Exception.cpp
 ${SRC_DIR}/InputPoint.cpp
 ${SRC_DIR}/InputFile.cpp
