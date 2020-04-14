@@ -44,7 +44,8 @@ public:
     string m_methode_datation;
     double m_param1;
     double m_param2;
-    //densite_priori_tdij:vecteur;
+    
+    vector<double> m_densite_priori_tdij; // courbe de calibration ?
 
     double m_Pij;
 

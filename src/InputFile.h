@@ -4,29 +4,26 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 
 class InputFile
 {
 public:
     InputFile();
-    InputFile(const string& filename);
+    InputFile(const std::string& filename);
     virtual ~InputFile();
 
-    void read(const string& filename);
-    vector<vector<string>> readCsv(const string& filename);
+    void read(const std::string& filename);
     void displayPoints() const;
 
 public:
-    string mComment1;
-    string mComment2;
-    string mComment3;
+    std::string mComment1;
+    std::string mComment2;
+    std::string mComment3;
 
     double mLatReduc;
     double mLngReduc;
 
-    vector<vector<string>> mPointsStr;
+    std::vector<std::vector<std::string>> mPointsStr;
 };
 
 #endif

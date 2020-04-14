@@ -31,6 +31,8 @@ enum Type
 // bool_spline_spherique : true que si mProcessType = PROCESS_TYPE_SPHERIQUE
 
 std::string upper(const std::string& s);
+bool string_contains(const std::string& str, const std::string& needle);
+bool string_contains(const std::string& str, const char* needle);
 
 /*template<class T> 
 inline const T& max(const T& a, const T& b)

@@ -13,7 +13,7 @@ InputParams::~InputParams()
 
 void InputParams::setInputDataTest1()
 {
-    mFilepath = "../tests/input.csv";
+    mFilepath = string("../tests/input.csv");
     //mCodes // leave empty to select all
 
     mProcessType = PROCESS_TYPE_UNIVARIE;

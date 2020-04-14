@@ -1,5 +1,6 @@
 #include "InputPoint.h"
 #include "Exception.h"
+#include "CsvReader.h"
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -422,6 +423,101 @@ InputPoint::InputPoint(int index, const InputFile& file, const InputParams& para
    /*m_XijP = round(Fij*cos(Iij*rad)*cos(Dij*rad),-15);
    m_YijP = round(Fij*cos(Iij*rad)*sin(Dij*rad),-15);
    m_ZijP = round(Fij*sin(Iij*rad),-15);*/
+
+
+    // --------------------------------------------------------------------------------------------
+    // Calcul des densités de date a priori dans les intervalles [tdij1,tdij2]
+    // --------------------------------------------------------------------------------------------
+    
+    // initialisation du tableau : densite_priori_tdij
+    int j_max = (int)round(m_tdij2) - (int)round(m_tdij1) + 1;
+    m_densite_priori_tdij.resize(j_max);
+
+    // lecture des paramètres de la densité selon la méthode de datation
+    if (m_methode_datation == "")
+    {
+        // cas où aucune indication sur la méthode de datation: seuls tdij1 et tdij2 sont rentrés dans le fichier
+        m_param1 = m_tdij1;
+        m_param2 = m_tdij2;
+    }
+
+    // cas d'une densité a priori uniforme, égale à 1 entre param1 et param2 et 1/2 aux deux bornes
+    if(m_methode_datation == "UNIF")
+    {
+        for(int j=0; j<j_max; ++j)
+        {
+            m_densite_priori_tdij[j] = 1;
+            //if ((j=1) or (j=j_max)) and (j_max>=2) then
+                // dans le cas où l'on cumule des intervalles du type [100, 200] et [200, 300], il faut éviter de cumuler 2 fois l'année 200 !
+                //Tab_pts[k].densite_priori_tdij[j]:=0.5
+        }
+    }
+    
+    // cas d'une densité a priori Gaussienne
+    else if(m_methode_datation == "GAUSS")
+    {
+        for(int j=0; j<j_max; ++j)
+        {
+            double tdij = m_tdij1 + j - 1;
+            m_densite_priori_tdij[j] = exp(-0.5 * sqrt((tdij - m_param1) / m_param2)) / m_param2;
+        }
+    }
+
+    else if(string_contains(m_methode_datation, "14C"))
+    {
+        const vector<vector<double>> tab_courbe_calibration_14C = CsvReader::readFileAsDouble("../calib/14C/" + m_methode_datation, ",");
+        
+        cout << m_tdij1 << endl;
+        exit(0);
+
+        // recherche de l'index de tdij1 dans tab_courbe_calibration
+        // (l'age est à l'index 0)
+        int index = round(m_tdij1) - round(tab_courbe_calibration_14C[0][0]);
+
+        if((index < 0) || (index >= tab_courbe_calibration_14C.size()))
+        {
+            // Juste un message ?
+            throw Exception("=> Index de tdij1 hors limites de courbe de calibration");
+        }
+
+        for(int j=0; j<j_max; ++j)
+        {
+            // on détermine Age = Courbe_calibration(tdij) et erreur = Courbe_calibration(tdij)
+            if((index + j) < tab_courbe_calibration_14C.size())
+            {
+                double age = tab_courbe_calibration_14C[index + j][1];
+                double err = tab_courbe_calibration_14C[index + j][2];
+
+                // on combine les erreurs sur Age et sur Courbe
+                double sigma = sqrt( sqrt(m_param2) + sqrt(err) );
+
+                // calcul densité
+                m_densite_priori_tdij[j] = exp(-0.5 * sqrt((age - m_param1) / sigma)) / sigma;
+            }
+            else
+            {
+                m_densite_priori_tdij[j] = 0;
+            }
+        }
+    }
+    // cas d'une densité quelconque à partir d'un fichier csv
+    else if(string_contains(m_methode_datation, "DATE"))
+    {
+        // Ces fichiers contiennent une ligne par point.
+        // Chaque point est défini par un couple (date, densité)
+        const vector<vector<double>> file = CsvReader::readFileAsDouble(m_methode_datation, ",");
+
+        for(int i=1; i<file.size(); ++i)
+        {
+            double date = file[i][0];
+            int index = round(date) - round(m_tdij1);
+
+            if((index >= 0) && (index < j_max))
+            {
+                m_densite_priori_tdij[index] = file[i][1];
+            }
+        }
+    }
 }
 
 InputPoint::~InputPoint()   
@@ -435,7 +531,7 @@ double InputPoint::parseDouble(const string& str)
     try{
         value = stod(str);
     }catch(const invalid_argument& ia){
-        cerr << "INPUT WARNING : Cannot convert " << (str != "" ? str : "(empty)") << " to double : " << ia.what() << ". Returning 0.0." << endl;
+        //cerr << "INPUT WARNING : Cannot convert " << (str != "" ? str : "(empty)") << " to double : " << ia.what() << ". Returning 0.0." << endl;
     }
     return value;
 }

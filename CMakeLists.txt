@@ -9,7 +9,7 @@ set(PROJECT_NAME Chronocurve)
 project(${PROJECT_NAME} VERSION 1.0)
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # configure a header file to pass the version number to the source code:
@@ -21,6 +21,7 @@ ${SRC_DIR}/main.cpp
 ${SRC_DIR}/Globals.cpp
 ${SRC_DIR}/Application.cpp
 ${SRC_DIR}/Exception.cpp
+${SRC_DIR}/CsvReader.cpp
 ${SRC_DIR}/InputPoint.cpp
 ${SRC_DIR}/InputFile.cpp
 ${SRC_DIR}/InputParams.cpp
