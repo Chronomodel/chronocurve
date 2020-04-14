@@ -13,10 +13,12 @@ private:
 public:
     static std::vector<std::vector<std::string>> readFile(const std::string& filename, const std::string& delimiter);
     static std::vector<std::vector<double>> readFileAsDouble(const std::string& filename, const std::string& delimiter);
+    static std::vector<std::vector<double>> readFileAsC14(const std::string& filename, const std::string& delimiter);
 
 public:
     inline static std::map< std::string, std::vector<std::vector<std::string>> > mFiles;
     inline static std::map< std::string, std::vector<std::vector<double>> > mFilesDouble;
+    inline static std::map< std::string, std::vector<std::vector<double>> > mFilesC14;
 };
 
 #endif
