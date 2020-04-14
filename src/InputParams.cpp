@@ -1,5 +1,7 @@
 #include "InputParams.h"
 
+using namespace std;
+
 
 InputParams::InputParams()
 {
