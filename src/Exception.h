@@ -4,17 +4,15 @@
 #include <string>
 #include <exception>
 
-using namespace std;
 
-
-class Exception: public exception
+class Exception: public std::exception
 {
 public:
-    explicit Exception(const string& message);
+    explicit Exception(const std::string& message);
     virtual const char* what() const throw();
 
 private:
-    string message;
+    std::string message;
 };
 
 #endif
