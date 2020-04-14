@@ -1,17 +1,13 @@
 #include "InputPoint.h"
 #include "Exception.h"
 #include "CsvReader.h"
-#include <string>
-#include <vector>
-#include <stdexcept>
 #include <iostream>
-#include <cctype>
 #include <cmath>
 
 using namespace std;
 
 
-InputPoint::InputPoint(int index, const InputFile& file, const InputParams& params, double& tFloor, double& tCeil, double& moy_errij2)
+InputPoint::InputPoint(int index, const InputFile& file, const InputParams& params, int& tFloor, int& tCeil, double& moy_errij2)
 {
     // ---------------------------------------------------------
     //  Arguments
@@ -125,7 +121,7 @@ InputPoint::InputPoint(int index, const InputFile& file, const InputParams& para
             }
 
             if(params.mUseCorrLat){
-                inc = inc + 0.5 * 3. * (sqrt(cos(inc * radian)) + 1) * (latReduc - lat);
+                inc = inc + 0.5 * 3. * (pow(cos(inc * radian), 2) + 1) * (latReduc - lat);
             }
 
             // Yij:=Fij;  Cette opération est effectuée avant l'appel à "Do_cravate" dans Unit "traitement_spline"
@@ -172,7 +168,7 @@ InputPoint::InputPoint(int index, const InputFile& file, const InputParams& para
             }
 
             if(params.mUseCorrLat){
-                f = f + sqrt( (3. * sqrt(sin(latReduc * radian)) + 1.) / (3. * sqrt(sin(lat * radian)) + 1.) );
+                f = f + sqrt( (3. * pow(sin(latReduc * radian), 2.) + 1.) / (3. * pow(sin(lat * radian), 2.) + 1.) );
             }
 
             EctYij = stdF;
@@ -286,12 +282,12 @@ InputPoint::InputPoint(int index, const InputFile& file, const InputParams& para
             dec = asin(sin(lgp - lngReducRadian) * cos(lap) / sin(pol)) * degre;
 
             // correction VADM
-            f = f * sqrt( (3. * sqrt(sin(latReducRadian)) + 1.) / (3. * sqrt(sin(latRadian)) + 1) );
+            f = f * sqrt( (3. * pow(sin(latReducRadian), 2) + 1.) / (3. * pow(sin(latRadian), 2) + 1) );
         }
                  
 
         // l'erreur est considérée identique sur X, Y et Z dans le cas vectoriel: cf. Lanos 2004, page 77
-        EctYij = sqrt((sqrt(stdF) + (2. * sqrt(f) / k)) / 3.);
+        EctYij = sqrt((stdF * stdF + (2. * f * f / k)) / 3.);
         rYij = round(( nF + 2 * nd ) / 3.); // ??? vérifier la validité de cette formule
         // le poids sur Fij domine le poids sur ID
         Pij = wF;
@@ -397,7 +393,7 @@ InputPoint::InputPoint(int index, const InputFile& file, const InputParams& para
     m_rYij = rYij;
 
     // sommation pour le calcul de l'erreur quadratique moyenne
-    moy_errij2 = moy_errij2 + (sqrt(EctYij) / rYij);
+    moy_errij2 = moy_errij2 + (EctYij * EctYij / rYij);
 
     // initialisation de la variance locale VGij = Var_G
     // Remarque: on doit multiplier Var_G par sqr(rad) si on veut comparer les erreurs SPH et VEC;
@@ -446,7 +442,7 @@ InputPoint::InputPoint(int index, const InputFile& file, const InputParams& para
     {
         for(int j=0; j<j_max; ++j)
         {
-            m_densite_priori_tdij[j] = 1;
+            m_densite_priori_tdij[j] = 1.l;
             //if ((j=1) or (j=j_max)) and (j_max>=2) then
                 // dans le cas où l'on cumule des intervalles du type [100, 200] et [200, 300], il faut éviter de cumuler 2 fois l'année 200 !
                 //Tab_pts[k].densite_priori_tdij[j]:=0.5
@@ -458,22 +454,26 @@ InputPoint::InputPoint(int index, const InputFile& file, const InputParams& para
     {
         for(int j=0; j<j_max; ++j)
         {
-            double tdij = m_tdij1 + j - 1;
-            m_densite_priori_tdij[j] = exp(-0.5 * sqrt((tdij - m_param1) / m_param2)) / m_param2;
+            double tdij = m_tdij1 + j;
+            m_densite_priori_tdij[j] = expl(-0.5l * powl((long double)(tdij - m_param1) / m_param2, 2.l)) / m_param2;
         }
     }
 
     else if(string_contains(m_methode_datation, "14C"))
     {
-        const vector<vector<double>> tab_courbe_calibration_14C = CsvReader::readFileAsDouble("../calib/14C/" + m_methode_datation, ",");
-        
-        cout << m_tdij1 << endl;
-        exit(0);
+        const vector<vector<double>> tab_courbe_calibration_14C = CsvReader::readFileAsC14("../calib/14C/" + m_methode_datation, ",");
 
         // recherche de l'index de tdij1 dans tab_courbe_calibration
         // (l'age est à l'index 0)
         int index = round(m_tdij1) - round(tab_courbe_calibration_14C[0][0]);
 
+        /*cout << tab_courbe_calibration_14C[0][0] << endl;
+        cout << tab_courbe_calibration_14C.size() << endl;
+        cout << m_tdij1 << endl;
+        cout << index << endl;
+        exit(0);*/
+
+        // La courbe de calibration doit être définie à l'année ?
         if((index < 0) || (index >= tab_courbe_calibration_14C.size()))
         {
             // Juste un message ?
@@ -489,14 +489,14 @@ InputPoint::InputPoint(int index, const InputFile& file, const InputParams& para
                 double err = tab_courbe_calibration_14C[index + j][2];
 
                 // on combine les erreurs sur Age et sur Courbe
-                double sigma = sqrt( sqrt(m_param2) + sqrt(err) );
+                long double sigma = sqrt((long double) (m_param2 * m_param2 + err * err));
 
                 // calcul densité
-                m_densite_priori_tdij[j] = exp(-0.5 * sqrt((age - m_param1) / sigma)) / sigma;
+                m_densite_priori_tdij[j] = expl(-0.5l * powl((long double)(age - m_param1) / sigma, 2.l)) / sigma;
             }
             else
             {
-                m_densite_priori_tdij[j] = 0;
+                m_densite_priori_tdij[j] = 0.l;
             }
         }
     }
@@ -510,11 +510,11 @@ InputPoint::InputPoint(int index, const InputFile& file, const InputParams& para
         for(int i=1; i<file.size(); ++i)
         {
             double date = file[i][0];
-            int index = round(date) - round(m_tdij1);
+            int index = (int)round(date) - (int)round(m_tdij1);
 
             if((index >= 0) && (index < j_max))
             {
-                m_densite_priori_tdij[index] = file[i][1];
+                m_densite_priori_tdij[index] = (long double)file[i][1];
             }
         }
     }
