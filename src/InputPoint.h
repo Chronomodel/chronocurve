@@ -6,21 +6,19 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 
 class InputPoint
 {
 public:
-    InputPoint(int index, const InputFile& file, const InputParams& params, double& tFloor, double& tCeil, double& moy_errij2);
+    InputPoint(int index, const InputFile& file, const InputParams& params, int& tFloor, int& tCeil, double& moy_errij2);
     virtual ~InputPoint();
 
 private:
-    double parseDouble(const string& str);
+    double parseDouble(const std::string& str);
 
 public:
 
-    string m_ident;
+    std::string m_ident;
     int m_index_crav;
 
     double m_tdij1;
@@ -34,22 +32,22 @@ public:
 
     double m_nuij; // Pas dans Rec_Pts ?
 
-    vector<int> m_tij_avant;
-    vector<int> m_tij_pendant;
-    vector<int> m_tij_apres;
+    std::vector<int> m_tij_avant;
+    std::vector<int> m_tij_pendant;
+    std::vector<int> m_tij_apres;
 
     bool m_tij_initialise;
     bool m_tij_maj_bay;
 
-    string m_methode_datation;
+    std::string m_methode_datation;
     double m_param1;
     double m_param2;
     
-    vector<double> m_densite_priori_tdij; // courbe de calibration ?
+    std::vector<long double> m_densite_priori_tdij;
 
     double m_Pij;
 
-    string m_contrainte_strati;
+    std::string m_contrainte_strati;
 
     double m_Iij;
     double m_Dij;

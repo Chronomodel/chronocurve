@@ -5,8 +5,6 @@
 #include <vector>
 #include <string>
 
-using namespace std;
-
 
 class InputParams
 {
@@ -16,8 +14,8 @@ public:
     void setInputDataTest1();
 
 public:
-    string mFilepath;
-    vector<string> mCodes;
+    std::string mFilepath;
+    std::vector<std::string> mCodes;
 
     ProcessType mProcessType; // Type de traitement
     VariableType mVariableType; // Type de variable étudiée
