@@ -2,7 +2,7 @@
 #define GLOBALS_H
 
 #include <string>
-//#include <cmath>
+#include <vector>
 
 #define radian (M_PI / 180)
 #define degre (180 / M_PI)
@@ -28,11 +28,19 @@ enum Type
     TYPE_BAYESIEN = 'B',
 };
 
+typedef struct Density {
+    double t;
+    double p;
+    double p_lisse;
+    int n;
+} Density;
+
 // bool_spline_spherique : true que si mProcessType = PROCESS_TYPE_SPHERIQUE
 
 std::string upper(const std::string& s);
 bool string_contains(const std::string& str, const std::string& needle);
 bool string_contains(const std::string& str, const char* needle);
+std::vector<std::string> explode(const std::string& str, const std::string& delimiter);
 
 /*template<class T> 
 inline const T& max(const T& a, const T& b)
